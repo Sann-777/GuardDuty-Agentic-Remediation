@@ -1,0 +1,103 @@
+{
+  "version": "0",
+  "id": "e2a149b5-7df8-43d9-95e2-63b71bf12345",
+  "detail-type": "GuardDuty Finding",
+  "source": "aws.guardduty",
+  "account": "123456789012",
+  "time": "2026-09-27T03:45:00Z",
+  "region": "us-east-1",
+  "resources": [
+    "i-0123456789abcdef0"
+  ],
+  "detail": {
+    "schemaVersion": "2.0",
+    "accountId": "123456789012",
+    "region": "us-east-1",
+    "partition": "aws",
+    "id": "8bfa541d40234a98a0d4c9d300abcdef",
+    "arn": "arn:aws:guardduty:us-east-1:123456789012:detector/1234567890abcdef/finding/8bfa541d40234a98a0d4c9d300abcdef",
+    "type": "UnauthorizedAccess:EC2/SSHBruteForce",
+    "resource": {
+      "resourceType": "Instance",
+      "instanceDetails": {
+        "instanceId": "i-0123456789abcdef0",
+        "instanceType": "t3.medium",
+        "networkInterfaces": [
+          {
+            "ipv4Addresses": [
+              {
+                "privateIpAddress": "10.0.1.25"
+              }
+            ],
+            "networkInterfaceId": "eni-0123456789abcdef0",
+            "subnetId": "subnet-0123456789abcdef0",
+            "vpcId": "vpc-0123456789abcdef0",
+            "securityGroups": [
+              {
+                "groupId": "sg-0123456789abcdef0",
+                "groupName": "web-ssh-sg"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "service": {
+      "serviceName": "guardduty",
+      "detectorId": "1234567890abcdef",
+      "action": {
+        "actionType": "NETWORK_CONNECTION",
+        "networkConnectionAction": {
+          "connectionDirection": "INBOUND",
+          "remoteIpDetails": {
+            "ipAddressV4": "185.220.101.5",
+            "organization": {
+              "asn": "12345",
+              "asnOrg": "Known-Tor-Exit-Node",
+              "isp": "Suspicious-Hosting-Provider",
+              "org": "Tor-Network"
+            },
+            "country": {
+              "countryName": "Seychelles"
+            },
+            "city": {
+              "cityName": "Victoria"
+            }
+          },
+          "remotePortDetails": {
+            "port": 49152,
+            "portName": "Unknown"
+          },
+          "localPortDetails": {
+            "port": 22,
+            "portName": "SSH"
+          },
+          "protocol": "TCP",
+          "blocked": false
+        }
+      },
+      "evidence": {
+        "threatIntelligenceDetails": [
+          {
+            "threatListName": "ProofPoint",
+            "threatNames": [
+              "SSH-BruteForce-Scanner"
+            ]
+          }
+        ]
+      },
+      "eventFirstSeen": "2026-09-27T03:30:00Z",
+      "eventLastSeen": "2026-09-27T03:44:00Z",
+      "resourceRole": "TARGET",
+      "additionalInfo": {
+        "sample": false
+      },
+      "count": 48
+    },
+    "severity": 7.5,
+    "createdAt": "2026-09-27T03:45:00Z",
+    "updatedAt": "2026-09-27T03:45:00Z",
+    "title": "EC2 instance is undergoing SSH brute force attacks.",
+    "description": "48 incoming SSH connections from 185.220.101.5 were observed trying to brute force passwords against instance i-0123456789abcdef0."
+  }
+}
