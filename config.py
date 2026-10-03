@@ -23,7 +23,7 @@ class Config:
     llm_provider: str = os.getenv("LLM_PROVIDER", "bedrock").lower()
 
     # AWS Bedrock Settings
-    bedrock_model_id: str = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
+    bedrock_model_id: str = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-3-5-sonnet-20241022-v2:0")
     bedrock_region: str = os.getenv("BEDROCK_REGION", os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
 
     # Anthropic API Settings
