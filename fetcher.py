@@ -1,13 +1,17 @@
 """
-fetcher.py - Ingests GuardDuty findings from AWS API or Local JSON
-==================================================================
-This is the "Eyes" of the bot. It retrieves finding JSON payloads so the
-agent can analyze them.
+fetcher.py - Ingests GuardDuty findings from AWS API or Local JSON & Rule Evaluator
+==================================================================================
+This is the "Eyes" and "Gatekeeper" of the bot:
+1. FindingFetcher: Ingests raw finding JSON payloads from AWS GuardDuty or disk.
+2. FindingRuleEvaluator: Rule Evaluator & Filter Node. Checks findings against
+   rule set (severity threshold, archived status, threat category).
+   - If condition == TRUE: proceeds to remediation loop.
+   - If condition == FALSE: gracefully terminates workflow.
 """
 
 import json
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import boto3
 from botocore.exceptions import ClientError
 
@@ -75,3 +79,96 @@ class FindingFetcher:
         elif isinstance(data, dict):
             return [data]
         return []
+
+
+class FindingRuleEvaluator:
+    """
+    Rule Evaluator Node (Filter / Condition Gatekeeper).
+    Filters findings according to the rule criteria:
+    - Must be unarchived (service.archived != True)
+    - Severity >= min_severity threshold (default: 7.0 High/Critical)
+    - Belongs to an actionable security attack category
+    """
+
+    def __init__(
+        self,
+        min_severity: float = 7.0,
+        allowed_categories: Optional[List[str]] = None
+    ):
+        self.min_severity = min_severity
+        self.allowed_categories = allowed_categories or [
+            "unauthorizedaccess",
+            "recon",
+            "trojan",
+            "stealth",
+            "exfiltration",
+            "cryptocurrency",
+            "privilegeescalation",
+            "impact",
+            "backdoor",
+            "execution",
+            "persistence",
+            "defenseevasion",
+            "credentialaccess",
+            "discovery",
+            "lateralmovement",
+            "policy"
+        ]
+
+    def evaluate(self, findings: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Evaluates findings against the rule set.
+        Returns:
+            {
+                "condition_matched": bool,     # True if actionable findings found, False otherwise
+                "matching_findings": list,     # Findings passing the filter
+                "discarded_count": int,        # Findings filtered out
+                "summary": str                 # Evaluator explanation
+            }
+        """
+        logger.info(f"[Rule Evaluator Node] Evaluating {len(findings)} finding(s) (Severity Threshold: {self.min_severity})...")
+        matching_findings = []
+        discarded_count = 0
+
+        for f in findings:
+            detail = f.get("detail", f)
+            severity = float(detail.get("severity", 0.0))
+            is_archived = detail.get("service", {}).get("archived", False)
+            finding_type = str(detail.get("type", "")).lower()
+
+            # Rule 1: Exclude already archived findings
+            if is_archived:
+                logger.info(f"  ↳ Discarding {detail.get('id', 'unknown')}: Finding is already archived.")
+                discarded_count += 1
+                continue
+
+            # Rule 2: Minimum severity check
+            if severity < self.min_severity:
+                logger.info(f"  ↳ Discarding {detail.get('id', 'unknown')}: Severity {severity} is below threshold {self.min_severity}.")
+                discarded_count += 1
+                continue
+
+            # Rule 3: Category match
+            category_match = any(cat in finding_type for cat in self.allowed_categories)
+            if not category_match:
+                logger.info(f"  ↳ Discarding {detail.get('id', 'unknown')}: Type '{finding_type}' not in actionable categories.")
+                discarded_count += 1
+                continue
+
+            # Passed all rules
+            logger.info(f"  ✅ Matched Rule: {detail.get('id', 'unknown')} | Type: {detail.get('type')} | Severity: {severity}")
+            matching_findings.append(f)
+
+        condition_matched = len(matching_findings) > 0
+        summary = (
+            f"Rule set matched {len(matching_findings)} actionable finding(s) (discarded {discarded_count})."
+            if condition_matched
+            else f"No findings matched the rule set (all {discarded_count} discarded)."
+        )
+
+        return {
+            "condition_matched": condition_matched,
+            "matching_findings": matching_findings,
+            "discarded_count": discarded_count,
+            "summary": summary
+        }
