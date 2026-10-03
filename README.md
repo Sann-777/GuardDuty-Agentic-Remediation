@@ -1,4 +1,4 @@
-# 🛡️ AWS GuardDuty Autonomous AI Remediation Agent
+# AWS GuardDuty Autonomous AI Remediation Agent
 
 [![CI & Test Pipeline](https://github.com/your-username/guardduty-ai-remediator/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/guardduty-ai-remediator/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -11,7 +11,7 @@ An autonomous, event-driven AI incident response framework that investigates, tr
 
 ---
 
-## 📌 Problem & Motivation
+## Problem & Motivation
 
 Modern Cloud Security Operations Centers (SOCs) face alert fatigue. When high-severity attacks occur (such as SSH brute forcing, credential exfiltration, or database exposure), manual triage can take hours. 
 
@@ -28,7 +28,7 @@ This project implements an **autonomous AI Security Agent** that:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 flowchart TD
@@ -65,7 +65,7 @@ flowchart TD
 
 ---
 
-## ⚙️ Dynamic Configuration (`.env`)
+## Dynamic Configuration (`.env`)
 
 ```ini
 # ==============================================================================
@@ -108,7 +108,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/XXX/YYY
 
 ---
 
-## 💻 Running the Agent
+## Running the Agent
 
 ### 1. Run with AWS Bedrock
 ```bash
@@ -142,14 +142,14 @@ python3 cli.py --aws --region us-east-1 --live --llm bedrock
 
 ---
 
-## 🧪 Automated Testing
+## Automated Testing
 ```bash
 pytest -v
 ```
 
 ---
 
-## 💼 Resume & Interview Talking Points
+## Resume & Interview Talking Points
 
 * **Dynamic Multi-LLM Orchestration**: Implemented a swappable AI reasoning architecture using AWS Bedrock Converse API, Anthropic, and OpenAI to autonomously evaluate threat telemetry without vendor lock-in.
 * **Closed-Loop Containment**: Automated blast-radius-aware remediation actions in AWS (NACL ingress blocking, IAM session invalidation, and RDS exposure mitigation).
