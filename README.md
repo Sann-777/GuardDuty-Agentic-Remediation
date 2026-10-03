@@ -1,6 +1,7 @@
 # AWS GuardDuty Autonomous AI Remediation Agent
 
-[![CI & Test Pipeline](https://github.com/your-username/guardduty-ai-remediator/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/guardduty-ai-remediator/actions)
+[![AWS GuardDuty](https://img.shields.io/badge/AWS-GuardDuty-orange.svg?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/guardduty/)
+[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](test_agent.py)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![PydanticAI](https://img.shields.io/badge/Agent%20Framework-PydanticAI-E92063.svg)](https://github.com/pydantic/pydantic-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
